@@ -2,6 +2,7 @@ package com.chemicaldev.trix.compiler;
 
 import com.chemicaldev.trix.core.Operations;
 import com.chemicaldev.trix.core.VMRegisters;
+import com.chemicaldev.trix.core.VMState;
 
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -14,7 +15,11 @@ public class Compiler {
     private int currentInstructionLine = 0;
 
     private HashMap<String, ArrayList<Integer>> instructionAddressOfSegmentToBeFilled = new HashMap<>();
-    private HashMap<String, Integer> instructionAddresses = new HashMap<>();
+    private HashMap<String, Integer> segmentAddress = new HashMap<>();
+
+    private HashMap<String, ArrayList<Integer>> instructionAddressOfLabelsToBeFilled = new HashMap<>();
+    private HashMap<String, Integer> labelAddress = new HashMap<>();
+
 
     public Compiler(String fileDirectory){
         InputStream fileStream = this.getClass().getResourceAsStream(fileDirectory);
@@ -24,12 +29,11 @@ public class Compiler {
 
             while(fileReader.hasNextLine()){
                 String line = fileReader.nextLine();
-
                 parse(line);
             }
 
             //fill blank instruction addresses
-            fillBlankInstructionAddressesOfSegment();
+            fillBlankInstructionAddress();
 
 
         }catch (NullPointerException e){
@@ -44,14 +48,18 @@ public class Compiler {
         if(line.length() <= 1) { return;}
         if(line.equals("\n")) return;
 
+        //check if line is a comment
+        if(line.startsWith(";")) return;
+
+
         String[] tokens = line.split(" ");
 
         //check if line is a segment
         if(tokens[0].trim().startsWith(":")){
-            instructionAddresses.put(tokens[0].trim(), currentInstructionLine);
+            segmentAddress.put(tokens[0].trim(), currentInstructionLine);
             return;
         }
-
+        if( CompilerState.DBG_ON) System.out.println(String.format("%s|%s", currentInstructionLine, line));
         switch (tokens[0]){
             case "push":
                 addInstruction(toInstruction(Operations.PUSH));
@@ -59,6 +67,12 @@ public class Compiler {
                 break;
             case "pop":
                 addInstruction(toInstruction(Operations.POP));
+                break;
+            case "peek":
+                addInstruction(toInstruction(Operations.PEEK));
+                break;
+            case "dup":
+                addInstruction(toInstruction(Operations.DUP));
                 break;
             case "break":
                 addInstruction(toInstruction(Operations.BREAK));
@@ -88,15 +102,42 @@ public class Compiler {
                 addInstruction(toInstruction(Operations.LW, getRegister(tokens[1])));
                 addInstruction(Integer.parseInt(tokens[2]));
                 break;
+            case "ls":
+                addInstruction(toInstruction(Operations.LS, getRegister(tokens[1])));
+                break;
+            //STORE TO HEAP
+            case "sw":
+                addInstruction(toInstruction(Operations.SW, getRegister(tokens[1].trim())));
+                addInstruction(Integer.parseInt(tokens[2]));
+                break;
+            case "ss":
+                addInstruction(toInstruction(Operations.SS));
+                addInstruction(Integer.parseInt(tokens[1]));
+                break;
+            case "ssr":
+                addInstruction(toInstruction(Operations.SS, getRegister(tokens[1])));
+                break;
             //JUMPS
+            case "jmp":
+                addInstruction(toInstruction(Operations.JMP));
+                addBlankInstructionLabel(tokens[1].trim());
+                break;
             case "jz":
                 addInstruction(toInstruction(Operations.JZ));
-                addBlankInstructionSegment(tokens[1].trim());
+                addBlankInstructionLabel(tokens[1].trim());
                 break;
             case "jnz":
                 addInstruction(toInstruction(Operations.JNZ));
+                addBlankInstructionLabel(tokens[1].trim());
+                break;
+            case "call":
+                addInstruction(toInstruction(Operations.CALL));
                 addBlankInstructionSegment(tokens[1].trim());
                 break;
+            case "lbl":
+                labelAddress.put(tokens[1].trim(), currentInstructionLine);
+                return;
+
         }
     }
 
@@ -111,13 +152,26 @@ public class Compiler {
             instructionAddressOfSegmentToBeFilled.put(segmentName, new ArrayList<>());
         }
 
-        instructionAddressOfSegmentToBeFilled.get(segmentName).add(currentInstructionLine++);
+        instructionAddressOfSegmentToBeFilled.get(segmentName).add(currentInstructionLine);
+    }
+
+    private void addBlankInstructionLabel(String labelName){
+        if(!instructionAddressOfLabelsToBeFilled.containsKey(labelName)){
+            instructionAddressOfLabelsToBeFilled.put(labelName, new ArrayList<>());
+        }
+
+        instructionAddressOfLabelsToBeFilled.get(labelName).add(currentInstructionLine);
     }
 
     /**
-     *  This will substitute the blank instruction lines with the segment instruction line
+     *  This will substitute the blank instruction lines with the segment and label instruction line
      */
-    private void fillBlankInstructionAddressesOfSegment(){
+    private void fillBlankInstructionAddress(){
+        fillBlankSegmentAddress();
+        fillBlankLabelAddress();
+    }
+
+    private void fillBlankSegmentAddress(){
         Iterator<String> segmentNames = instructionAddressOfSegmentToBeFilled.keySet().iterator();
 
         while(segmentNames.hasNext()){
@@ -125,10 +179,29 @@ public class Compiler {
             ArrayList<Integer> blankInstructions = instructionAddressOfSegmentToBeFilled.get(segmentName);
 
             for(int address : blankInstructions){
-                instructions[address] = instructionAddresses.get(segmentName);
+                instructions[address] = segmentAddress.get(segmentName);
             }
         }
     }
+
+    private void fillBlankLabelAddress(){
+        Iterator<String> labelNames = instructionAddressOfLabelsToBeFilled.keySet().iterator();
+
+        while(labelNames.hasNext()){
+            String labelName = labelNames.next();
+            ArrayList<Integer> blankInstructions = instructionAddressOfLabelsToBeFilled.get(labelName);
+
+            for(int address : blankInstructions){
+                instructions[address] = labelAddress.get(labelName);
+            }
+
+            if( CompilerState.DBG_ON) System.out.println(String.format("LABEL ADDR [%s]: ", labelName) + labelAddress.get(labelName));
+        }
+    }
+
+
+
+
 
     private byte getRegister(String registerToken){
         switch (registerToken){

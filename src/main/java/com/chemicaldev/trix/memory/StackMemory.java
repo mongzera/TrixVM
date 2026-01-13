@@ -25,6 +25,6 @@ public class StackMemory {
     }
 
     public void print(){
-        memoryChunk.print("[STACK MEMORY KIND]");
+        memoryChunk.print("[STACK MEMORY KIND] PTR: " + pointer);
     }
 }

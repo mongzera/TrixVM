@@ -21,19 +21,31 @@ public class VirtualMachineEngine {
     public void operate(){
         /** Initializations */
 
+
+
         while(VMState.CPU_ON){
+
+            try {
+                Thread.sleep(50);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
 
             // Check first if there is loaded instructions
             if(!VMState.HAS_LOADED_INSTRUCTIONS) return;
-            //System.out.println("PC: " + programCounter);
-            evalInstruction(programMemory.read(programCounter));
+            int instruction = programMemory.read(programCounter);
+            if(VMState.DBG_ON) System.out.println("0x" + Integer.toHexString(instruction) + "| PC: " + programCounter);
+            evalInstruction(instruction);
+
             //stackMemory.print();
         }
     }
 
     private void evalInstruction(int instruction){
         byte OP_CODE = (byte)(instruction >> 24);
-        byte REGISTER = (byte)((instruction >> 16) & 0x00FF);
+        byte REGISTER_1 = (byte)((instruction >> 16) & 0x00FF);
+        byte REGISTER_2 = (byte)((instruction >> 8) & 0xFF);
+        byte REGISTER_3 = (byte)((instruction >> 8) & 0xFF);
 
         //temp variables
         int a, b, c, d, e;
@@ -44,6 +56,14 @@ public class VirtualMachineEngine {
             case Operations.POP:
                 a = stackMemory.pop();
                 System.out.println(a);
+                break;
+            case Operations.PEEK:
+                System.out.println(stackMemory.peek());
+                break;
+            case Operations.DUP:
+                a = stackMemory.pop();
+                stackMemory.push(a);
+                stackMemory.push(a);
                 break;
             case Operations.BREAK:
                 if(callStack.getPointer() >= 0){
@@ -58,7 +78,7 @@ public class VirtualMachineEngine {
 
                 break;
             case Operations.PUSHR:
-                stackMemory.push(VMRegisters.getRegisterValue(REGISTER));
+                stackMemory.push(VMRegisters.getRegisterValue(REGISTER_1));
                 break;
 
             /** Arithmetic */
@@ -85,39 +105,52 @@ public class VirtualMachineEngine {
 
             /** Registers */
             case Operations.LI:
-                VMRegisters.loadToRegister(REGISTER, programMemory.read(++programCounter));
+                VMRegisters.loadToRegister(REGISTER_1, programMemory.read(++programCounter));
                 break;
             case Operations.LW:
                 a = programMemory.read(++programCounter); //Memory Address of the Word in HeapStorage
-                VMRegisters.loadToRegister(REGISTER, heapMemory.read(a));
+                VMRegisters.loadToRegister(REGISTER_1, heapMemory.read(a));
+                break;
+            case Operations.LS:
+                a = stackMemory.pop(); // Pop stack
+                VMRegisters.loadToRegister(REGISTER_2, a);
                 break;
 
             /** Memory Store */
             case Operations.SW:
                 a = programMemory.read(++programCounter); //Memory Address where to store the word
-                heapMemory.write(a, VMRegisters.getRegisterValue(REGISTER));
+                heapMemory.write(a, VMRegisters.getRegisterValue(REGISTER_1));
+                break;
+            case Operations.SS:
+                a = stackMemory.pop(); //Memory Address where to store the word
+                b = programMemory.read(++programCounter);
+                heapMemory.write(b, a);
+                break;
+            case Operations.SSR:
+                a = stackMemory.pop(); //value, top of stack
+                heapMemory.write(REGISTER_1, a);
                 break;
 
-            /** Jump Mechanisms */
+            /** Jump Mechanisms USE RETURN INSTEAD OF BREAK*/
+            case Operations.JMP:
+                a = programMemory.read(++programCounter);
+                programCounter = a;
+                return;
             case Operations.JZ:
                 a = programMemory.read(++programCounter);
-
-                //push to call stack, we resume our last operation when we are done
-                callStack.push(++programCounter);
                 if(stackMemory.peek() == 0) programCounter = a;
-                break;
-
+                return;
             case Operations.JNZ:
-
+                a = programMemory.read(++programCounter);
+                if(stackMemory.peek() != 0) programCounter = a;
+                return;
+            case Operations.CALL:
                 a = programMemory.read(++programCounter);
                 callStack.push(++programCounter);
-                if(stackMemory.peek() != 0) programCounter = a;
-                break;
 
-                //DONT USE: Not sure what to do or if it is needed
-//            case Operations.JZR:
-//                if(stackMemory.peek() == 0) programCounter = VMRegisters.getRegisterValue(REGISTER);
-//                break;
+                programCounter = a;
+                return;
+
 //
 //            case Operations.JNZR:
 //                if(stackMemory.peek() != 0) programCounter = VMRegisters.getRegisterValue(REGISTER);

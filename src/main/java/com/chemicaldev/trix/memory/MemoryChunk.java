@@ -20,12 +20,12 @@ public class MemoryChunk {
 
     public int read(int address){
         if(checkBounds(address)) return MEMORY_ARRAY[address];
-        else throw new Error("Memory read out of bounds!");
+        else throw new Error("Memory read out of bounds! [" + address + "]");
     }
 
     public void write(int address, int value){
         if(checkBounds(address)) MEMORY_ARRAY[address] = value;
-        else throw new Error("Memory write out of bounds!");
+        else throw new Error("Memory write out of bounds! [" + address + "]");
     }
 
     public void print(String title){
