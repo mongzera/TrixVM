@@ -20,7 +20,8 @@ public class Operations {
     //Register Load OpCode
     public static final byte LI = 0x21; //Load Immediate
     public static final byte LW = 0x22; //Load Word ie. 32 bits = 4bytes
-    public static final byte LS = 0x23; //Load from top of stack
+    public static final byte LWR = 0x23; //Load Word ie. 32 bits = 4bytes
+    public static final byte LS = 0x24; //Load from top of stack
 
 
     //Memory Store OpCode

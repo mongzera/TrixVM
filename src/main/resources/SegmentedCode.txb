@@ -1,21 +1,29 @@
 :main
-    li r3 5 ; iterate 5 times
-    li r0 0 ; Load 0 to r0
-    li r1 1 ; Load 1 to r1
-    sw r0 0 ; Store value of r0 to addr 0x0
-    sw r1 1 ; Store value of r1 to addr 0x1
-    li r2 2 ; Load 2 to r2, this will stand as the current n of fib
-
-    lbl _fib
+    li r0 0
+    li r1 1
 
 
-    pushr r0;
-    pushr r1;
+    pushr r0
+    peek
+    pushr r1
+    peek
     add
-    ssr r2
-    pushr r2
-    push 1
-    add
+    peek
     ls r2
+
+    lbl fib
+    pushr r1
+    ls r0
+
+    pushr r2
+    ls r1
+
+    pushr r0
+    pushr r1
+    add
+    peek
+    ls r2
+    jmp fib
+
 
     break

@@ -1,7 +1,5 @@
 :global
-
-    PUSH 15
-    PUSH 30
-    SUB
-
-    BREAK
+    li r1 5
+    pushr r1
+    ls r2
+    break

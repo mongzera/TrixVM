@@ -102,6 +102,9 @@ public class Compiler {
                 addInstruction(toInstruction(Operations.LW, getRegister(tokens[1])));
                 addInstruction(Integer.parseInt(tokens[2]));
                 break;
+            case "lwr":
+                addInstruction(toInstruction(Operations.LW, getRegister(tokens[1]), getRegister(tokens[2])));
+                break;
             case "ls":
                 addInstruction(toInstruction(Operations.LS, getRegister(tokens[1])));
                 break;
@@ -115,7 +118,7 @@ public class Compiler {
                 addInstruction(Integer.parseInt(tokens[1]));
                 break;
             case "ssr":
-                addInstruction(toInstruction(Operations.SS, getRegister(tokens[1])));
+                addInstruction(toInstruction(Operations.SSR, getRegister(tokens[1])));
                 break;
             //JUMPS
             case "jmp":

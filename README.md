@@ -17,6 +17,7 @@ DIV
 Register Load
 li <register> <integer>: li r0 5
 lw <register> <heap_address>: lw r0 0x000
+lwr <register1> <register2>: Registered version of lw
 ls <register>: ls r0, loads top of stack to register
 
 Memory Store [heap]

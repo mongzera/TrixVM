@@ -36,16 +36,16 @@ public class VirtualMachineEngine {
             int instruction = programMemory.read(programCounter);
             if(VMState.DBG_ON) System.out.println("0x" + Integer.toHexString(instruction) + "| PC: " + programCounter);
             evalInstruction(instruction);
-
-            //stackMemory.print();
+            if(VMState.DBG_ON) System.out.printf("[R0=%s, R1=%s, R2=%s, R3=%s]%n", VMRegisters.getRegisterValue(VMRegisters.R0), VMRegisters.getRegisterValue(VMRegisters.R1), VMRegisters.getRegisterValue(VMRegisters.R2), VMRegisters.getRegisterValue(VMRegisters.R3));
+            if(VMState.MEM_DBG_ON) stackMemory.print();
         }
     }
 
     private void evalInstruction(int instruction){
         byte OP_CODE = (byte)(instruction >> 24);
         byte REGISTER_1 = (byte)((instruction >> 16) & 0x00FF);
-        byte REGISTER_2 = (byte)((instruction >> 8) & 0xFF);
-        byte REGISTER_3 = (byte)((instruction >> 8) & 0xFF);
+        byte REGISTER_2 = (byte)((instruction >> 8) & 0x0000FF);
+        byte REGISTER_3 = (byte)((instruction) & 0x000000FF);
 
         //temp variables
         int a, b, c, d, e;
@@ -111,9 +111,12 @@ public class VirtualMachineEngine {
                 a = programMemory.read(++programCounter); //Memory Address of the Word in HeapStorage
                 VMRegisters.loadToRegister(REGISTER_1, heapMemory.read(a));
                 break;
+            case Operations.LWR:
+                VMRegisters.loadToRegister(REGISTER_1, heapMemory.read(REGISTER_2));
+                break;
             case Operations.LS:
                 a = stackMemory.pop(); // Pop stack
-                VMRegisters.loadToRegister(REGISTER_2, a);
+                VMRegisters.loadToRegister(REGISTER_1, a);
                 break;
 
             /** Memory Store */
