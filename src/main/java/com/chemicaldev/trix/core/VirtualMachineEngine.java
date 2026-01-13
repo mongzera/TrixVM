@@ -33,12 +33,12 @@ public class VirtualMachineEngine {
         byte OP_CODE = (byte)(instruction >> 24);
         byte REGISTER = (byte)((instruction >> 16) & 0x00FF);
 
-        System.out.println(String.format("Instruction: 0x%s", Integer.toHexString(instruction)));
+        //System.out.println(String.format("Instruction: 0x%s", Integer.toHexString(instruction)));
         if(OP_CODE == 0 || OP_CODE == Operations.BREAK) {
             VMState.CPU_ON = false; // Turn off VM
             if(stackMemory.getPointer() >= 0) System.out.println(stackMemory.peek());
 
-            heapMemory.print("HEAP MEMORY");
+            if(VMState.DBG_ON) heapMemory.print("HEAP MEMORY");
         }
 
         //temp variables

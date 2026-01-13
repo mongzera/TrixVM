@@ -1,0 +1,7 @@
+:global
+
+    PUSH 15
+    PUSH 30
+    SUB
+
+    BREAK

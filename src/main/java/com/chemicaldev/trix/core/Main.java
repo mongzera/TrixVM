@@ -2,8 +2,6 @@ package com.chemicaldev.trix.core;
 
 import com.chemicaldev.trix.compiler.Compiler;
 
-import java.rmi.registry.Registry;
-
 public class Main {
 
     int[] instructions = new int[]{
@@ -27,8 +25,11 @@ public class Main {
 
     public Main(){
         //System.out.println("0x" + Integer.toBinaryString(Compiler.toInstruction(Operations.PUSH)));
+
+        Compiler compiler = new Compiler("/TrixCode.txb");
+
         VirtualMachineEngine engine = new VirtualMachineEngine();
-        engine.prepare(instructions);
+        engine.prepare(compiler.getInstructions());
 
         engine.operate();
     }
