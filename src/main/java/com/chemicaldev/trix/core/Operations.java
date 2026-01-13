@@ -4,23 +4,23 @@ import java.util.HashMap;
 
 public class Operations {
 
-    public static final int PUSH =  0x00010000;
-    public static final int POP  =  0x00020000;
-    public static final int PEEK =  0x00030000;
-    public static final int BREAK = 0x00040000;
+    public static final byte PUSH =  0x01;
+    public static final byte POP  =  0x02;
+    public static final byte PEEK =  0x03;
+    public static final byte BREAK = 0x04;
 
     //Arithmetic OpCode
-    public static final int ADD = 0x00110000;
-    public static final int SUB = 0x00120000;
-    public static final int MUL = 0x00130000;
-    public static final int DIV = 0x00140000;
+    public static final byte ADD = 0x11;
+    public static final byte SUB = 0x12;
+    public static final byte MUL = 0x13;
+    public static final byte DIV = 0x14;
 
     //Register Load OpCode
-    public static final int LI = 0x00210000; //Load Immediate
-    public static final int LW = 0x00220000; //Load Word ie. 32 bits = 4bytes
+    public static final byte LI = 0x21; //Load Immediate
+    public static final byte LW = 0x22; //Load Word ie. 32 bits = 4bytes
 
     //Memory Store OpCode
-    public static final int SW = 0x00310000; //Store Word ie. 32 bits = 4bytes
+    public static final byte SW = 0x31; //Store Word ie. 32 bits = 4bytes
 
 
 

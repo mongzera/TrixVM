@@ -1,38 +1,43 @@
 package com.chemicaldev.trix.core;
 
 public class VMRegisters {
-    public static int R0 = 0;
-    public static int R1 = 0;
-    public static int R2 = 0;
-    public static int R3 = 0;
+    public static final byte R0 = 0;
+    public static final byte R1 = 1;
+    public static final byte R2 = 2;
+    public static final byte R3 = 3;
 
-    public static void loadToRegister(int register, int value){
+    private static int R0_value = 0;
+    private static int R1_value = 0;
+    private static int R2_value = 0;
+    private static int R3_value = 0;
+
+    public static void loadToRegister(byte register, int value){
         switch (register){
             case 0:
-                VMRegisters.R0 = value;
+                VMRegisters.R0_value = value;
                 break;
             case 1:
-                VMRegisters.R1 = value;
+                VMRegisters.R1_value = value;
                 break;
             case 2:
-                VMRegisters.R2 = value;
+                VMRegisters.R2_value = value;
                 break;
             case 3:
-                VMRegisters.R3 = value;
+                VMRegisters.R3_value = value;
                 break;
         }
     }
 
-    public static int getRegisterValue(int register){
+    public static int getRegisterValue(byte register){
         switch (register){
-            case 0:
-                return VMRegisters.R0;
-            case 1:
-                return VMRegisters.R1;
-            case 2:
-                return VMRegisters.R2;
+            case R0:
+                return VMRegisters.R0_value;
+            case R1:
+                return VMRegisters.R1_value;
+            case R2:
+                return VMRegisters.R2_value;
             default: //default since R3 is the last register
-                return VMRegisters.R3;
+                return VMRegisters.R3_value;
         }
     }
 }

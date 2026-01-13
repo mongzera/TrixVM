@@ -30,8 +30,10 @@ public class VirtualMachineEngine {
     }
 
     private void evalInstruction(int instruction){
-        int OP_CODE = instruction & 0xFFFF0000;
+        byte OP_CODE = (byte)(instruction >> 24);
+        byte REGISTER = (byte)((instruction >> 16) & 0x00FF);
 
+        System.out.println(String.format("Instruction: 0x%s", Integer.toHexString(instruction)));
         if(OP_CODE == 0 || OP_CODE == Operations.BREAK) {
             VMState.CPU_ON = false; // Turn off VM
             if(stackMemory.getPointer() >= 0) System.out.println(stackMemory.peek());
@@ -39,6 +41,7 @@ public class VirtualMachineEngine {
             heapMemory.print("HEAP MEMORY");
         }
 
+        //temp variables
         int a, b, c, d, e;
         switch (OP_CODE){
             case Operations.PUSH:
@@ -73,20 +76,17 @@ public class VirtualMachineEngine {
 
             /** Registeres */
             case Operations.LI:
-                a = instruction & 0x0000FFFF; //Register
-                VMRegisters.loadToRegister(a, programMemory.read(++programCounter));
+                VMRegisters.loadToRegister(REGISTER, programMemory.read(++programCounter));
                 break;
             case Operations.LW:
-                a = instruction & 0x0000FFFF; //Register
-                b = programMemory.read(++programCounter); //Memory Address of the Word in HeapStorage
-                VMRegisters.loadToRegister(a, heapMemory.read(b));
+                a = programMemory.read(++programCounter); //Memory Address of the Word in HeapStorage
+                VMRegisters.loadToRegister(REGISTER, heapMemory.read(a));
                 break;
 
             /** Memory Store */
             case Operations.SW:
-                a = instruction & 0x0000FFFF; //Register that has the value
-                b = programMemory.read(++programCounter); //Memory Address where to store the word
-                heapMemory.write(b, VMRegisters.getRegisterValue(a));
+                a = programMemory.read(++programCounter); //Memory Address where to store the word
+                heapMemory.write(a, VMRegisters.getRegisterValue(REGISTER));
                 break;
 
         }
