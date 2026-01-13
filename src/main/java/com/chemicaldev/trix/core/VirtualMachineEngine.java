@@ -10,6 +10,7 @@ public class VirtualMachineEngine {
     MemoryChunk programMemory = new MemoryChunk(1024);
     MemoryChunk heapMemory = new MemoryChunk(1024);
     StackMemory stackMemory = new StackMemory();
+    StackMemory callStack = new StackMemory();
 
     public void prepare(int[] instructions){
         VMState.CPU_ON = true;
@@ -24,22 +25,15 @@ public class VirtualMachineEngine {
 
             // Check first if there is loaded instructions
             if(!VMState.HAS_LOADED_INSTRUCTIONS) return;
-
+            //System.out.println("PC: " + programCounter);
             evalInstruction(programMemory.read(programCounter));
+            //stackMemory.print();
         }
     }
 
     private void evalInstruction(int instruction){
         byte OP_CODE = (byte)(instruction >> 24);
         byte REGISTER = (byte)((instruction >> 16) & 0x00FF);
-
-        //System.out.println(String.format("Instruction: 0x%s", Integer.toHexString(instruction)));
-        if(OP_CODE == 0 || OP_CODE == Operations.BREAK) {
-            VMState.CPU_ON = false; // Turn off VM
-            if(stackMemory.getPointer() >= 0) System.out.println(stackMemory.peek());
-
-            if(VMState.DBG_ON) heapMemory.print("HEAP MEMORY");
-        }
 
         //temp variables
         int a, b, c, d, e;
@@ -50,6 +44,21 @@ public class VirtualMachineEngine {
             case Operations.POP:
                 a = stackMemory.pop();
                 System.out.println(a);
+                break;
+            case Operations.BREAK:
+                if(callStack.getPointer() >= 0){
+                    programCounter = callStack.pop();
+                    return;
+                }
+
+                VMState.CPU_ON = false; // Turn off VM
+                //if(VMState.DBG_ON) stackMemory.print();
+
+                //if(VMState.DBG_ON) heapMemory.print("HEAP MEMORY");
+
+                break;
+            case Operations.PUSHR:
+                stackMemory.push(VMRegisters.getRegisterValue(REGISTER));
                 break;
 
             /** Arithmetic */
@@ -74,7 +83,7 @@ public class VirtualMachineEngine {
                 stackMemory.push(a / b);
                 break;
 
-            /** Registeres */
+            /** Registers */
             case Operations.LI:
                 VMRegisters.loadToRegister(REGISTER, programMemory.read(++programCounter));
                 break;
@@ -89,6 +98,30 @@ public class VirtualMachineEngine {
                 heapMemory.write(a, VMRegisters.getRegisterValue(REGISTER));
                 break;
 
+            /** Jump Mechanisms */
+            case Operations.JZ:
+                a = programMemory.read(++programCounter);
+
+                //push to call stack, we resume our last operation when we are done
+                callStack.push(++programCounter);
+                if(stackMemory.peek() == 0) programCounter = a;
+                break;
+
+            case Operations.JNZ:
+
+                a = programMemory.read(++programCounter);
+                callStack.push(++programCounter);
+                if(stackMemory.peek() != 0) programCounter = a;
+                break;
+
+                //DONT USE: Not sure what to do or if it is needed
+//            case Operations.JZR:
+//                if(stackMemory.peek() == 0) programCounter = VMRegisters.getRegisterValue(REGISTER);
+//                break;
+//
+//            case Operations.JNZR:
+//                if(stackMemory.peek() != 0) programCounter = VMRegisters.getRegisterValue(REGISTER);
+//                break;
         }
 
         programCounter++;

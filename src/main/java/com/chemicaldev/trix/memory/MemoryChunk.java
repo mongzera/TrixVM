@@ -35,7 +35,7 @@ public class MemoryChunk {
         for(int i = 0; i < width; i++) System.out.print("-");
         System.out.print("\n");
 
-        for(int i = 0; i < 30; i++){
+        for(int i = 0; i < 10; i++){
             System.out.println(String.format("0x%s:%s", Integer.toHexString(i), MEMORY_ARRAY[i]));
         }
     }

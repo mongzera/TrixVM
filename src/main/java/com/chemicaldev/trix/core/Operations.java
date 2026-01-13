@@ -24,9 +24,10 @@ public class Operations {
     //Memory Store OpCode
     public static final byte SW = 0x31; //Store Word ie. 32 bits = 4bytes
 
-
-
-
-
+    //Instruction Manipulation
+    public static final byte JNZ = 0x40; //Set the program counter to x if top of stack /= 0
+    public static final byte JZ = 0x41; //Set the program counter to x if top of stack = 0
+    public static final byte JNZR = 0x42; // JNZ_REGISTER Set the program counter to x if top of stack = 0
+    public static final byte JZR = 0x43; //JZ_REGISTER Set the program counter to x if top of stack = 0
 
 }

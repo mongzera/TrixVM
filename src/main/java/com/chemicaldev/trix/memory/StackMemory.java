@@ -23,4 +23,8 @@ public class StackMemory {
     public int getPointer(){
         return pointer;
     }
+
+    public void print(){
+        memoryChunk.print("[STACK MEMORY KIND]");
+    }
 }
