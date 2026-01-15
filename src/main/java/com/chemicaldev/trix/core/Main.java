@@ -1,15 +1,15 @@
 package com.chemicaldev.trix.core;
 
-import com.chemicaldev.trix.compiler.Compiler;
+import com.chemicaldev.trix.compiler.codegenerator.CodeGeneration;
 
 public class Main {
 
     public Main(){
-        //System.out.println("0x" + Integer.toBinaryString(Compiler.toInstruction(Operations.PUSH)));
+        //System.out.println("0x" + Integer.toBinaryString(CodeGeneration.toInstruction(Operations.PUSH)));
 
-        Compiler txb1 = new Compiler("/SegmentedCode.txb");
-        //Compiler txb2 = new Compiler("/SyscallFloatInput.txb");
-        Compiler txb2 = new Compiler("/fib.txb");
+        //CodeGeneration txb1 = new CodeGeneration("/SegmentedCode.txb");
+        //CodeGeneration txb2 = new CodeGeneration("/SyscallFloatInput.txb");
+        CodeGeneration txb2 = new CodeGeneration("/SampleTextPrint.txb");
 
         VirtualMachineEngine engine = new VirtualMachineEngine();
 

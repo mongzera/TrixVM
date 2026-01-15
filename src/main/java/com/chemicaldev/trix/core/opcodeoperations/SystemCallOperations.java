@@ -2,11 +2,11 @@ package com.chemicaldev.trix.core.opcodeoperations;
 
 import com.chemicaldev.trix.core.VMRegisters;
 import com.chemicaldev.trix.core.context.ContextWindow;
-
 import java.util.Scanner;
 
 public class SystemCallOperations {
     private static final Scanner lineRead = new Scanner(System.in);
+
     public static void eval(byte OP_CODE, byte REGISTER_1, byte REGISTER_2, byte REGISTER_3, ContextWindow contextWindow) {
 
         int i_a, i_b;
@@ -36,6 +36,35 @@ public class SystemCallOperations {
                 f_a = Float.intBitsToFloat(contextWindow.stackMemory.pop());
                 System.out.println(f_a);
                 break;
+            case 5:
+                //read char[]
+                break;
+            case 6:
+                //print char[]
+                i_a = contextWindow.stackMemory.pop();
+
+                boolean terminated = false;
+                StringBuilder str = new StringBuilder();
+                int offset = 0;
+
+                while (!terminated) {
+                    int word = contextWindow.heapMemory.read(i_a + offset++);
+
+                    for (int i = 0; i < 4; i++) {
+                        int ch = (word >> ((3-i) * 8)) & 0xFF; // extract byte
+
+                        if (ch == 0) {
+                            terminated = true;
+                            break;
+                        }
+
+                        str.append((char) ch);
+                    }
+                }
+
+                System.out.print(str);
+                break;
+
         }
 
         contextWindow.incrementPC();

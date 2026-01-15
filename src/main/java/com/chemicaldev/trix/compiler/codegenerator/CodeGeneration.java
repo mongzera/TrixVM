@@ -1,4 +1,4 @@
-package com.chemicaldev.trix.compiler;
+package com.chemicaldev.trix.compiler.codegenerator;
 
 import com.chemicaldev.trix.core.Operations;
 import com.chemicaldev.trix.core.VMRegisters;
@@ -9,7 +9,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Scanner;
 
-public class Compiler {
+public class CodeGeneration {
     private int[] instructions = new int[1024]; //LENGTH MUST BE THE SAME AS PROGRAM_MEMORY_SIZE
     private int currentInstructionLine = 0;
 
@@ -20,7 +20,7 @@ public class Compiler {
     private HashMap<String, Integer> labelAddress = new HashMap<>();
 
 
-    public Compiler(String fileDirectory){
+    public CodeGeneration(String fileDirectory){
         InputStream fileStream = this.getClass().getResourceAsStream(fileDirectory);
         try{
             Scanner fileReader = new Scanner(fileStream);
@@ -50,19 +50,23 @@ public class Compiler {
         //check if line is a comment
         if(line.startsWith(";")) return;
 
-
-        String[] tokens = line.split(" ");
+        String[] tokens = tokenize(line);
 
         //check if line is a segment
         if(tokens[0].trim().startsWith(":")){
             segmentAddress.put(tokens[0].trim(), currentInstructionLine);
             return;
         }
-        if( CompilerState.DBG_ON) System.out.println(String.format("%s|%s", currentInstructionLine, line));
+
+        if( CodeGenerationState.DBG_ON) System.out.println(String.format("%s|%s", currentInstructionLine, line));
+
         switch (tokens[0]){
             case "ipush":
                 addInstruction(toInstruction(Operations.PUSH));
-                addInstruction(Integer.parseInt(tokens[1]));
+                String value = tokens[1].trim();
+                if(value.startsWith("0x") || value.startsWith("0X")) addInstruction(Integer.parseInt(value.substring(2), 16));
+                else addInstruction(Integer.parseInt(tokens[1]));
+
                 break;
             case "fpush":
                 addInstruction(toInstruction(Operations.PUSH));
@@ -164,6 +168,11 @@ public class Compiler {
         }
     }
 
+    /** Removes empty spaces */
+    private String[] tokenize(String line){
+        return line.replaceAll("\\s+", " ").split(" ");
+    }
+
     /** This function will leave the current line blank
      * The line number will be remembered where we will go back to
      * when we're done loading the program.
@@ -218,7 +227,7 @@ public class Compiler {
                 instructions[address] = labelAddress.get(labelName);
             }
 
-            if( CompilerState.DBG_ON) System.out.println(String.format("LABEL ADDR [%s]: ", labelName) + labelAddress.get(labelName));
+            if( CodeGenerationState.DBG_ON) System.out.println(String.format("LABEL ADDR [%s]: ", labelName) + labelAddress.get(labelName));
         }
     }
 
@@ -258,15 +267,15 @@ public class Compiler {
     }
 
     public static int toInstruction(byte arg1){
-        return Compiler.toInstruction(arg1, (byte)0, (byte) 0, (byte) 0);
+        return CodeGeneration.toInstruction(arg1, (byte)0, (byte) 0, (byte) 0);
     }
 
     public static int toInstruction(byte arg1, byte arg2){
-        return Compiler.toInstruction(arg1, arg2, (byte) 0, (byte) 0);
+        return CodeGeneration.toInstruction(arg1, arg2, (byte) 0, (byte) 0);
     }
 
     public static int toInstruction(byte arg1, byte arg2, byte arg3){
-        return Compiler.toInstruction(arg1, arg2, arg3, (byte) 0);
+        return CodeGeneration.toInstruction(arg1, arg2, arg3, (byte) 0);
     }
 
 

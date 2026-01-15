@@ -1,0 +1,16 @@
+literal datatypes:
+int
+u_int
+float
+char
+byte
+u_byte
+void
+
+int main(){
+
+}
+
+void run(){
+
+}

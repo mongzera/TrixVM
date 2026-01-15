@@ -199,7 +199,7 @@ as we left it.
 * Stack values are always 32-bit words
 * Registers are general-purpose
 * PUSH is generic; type is tracked by the compiler
-* SYS interprets values using r0 (syscall ID)
+* SYSCALL interprets values using r0 (syscall ID)
 * Jumps and calls use absolute instruction indices
 * Use JMP / JZ / JNZ for loops
 * Use CALL only for subroutines

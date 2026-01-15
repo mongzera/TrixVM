@@ -1,0 +1,17 @@
+:text_print
+    ; Load chars to memory
+    ipush   0x57656C63  ; Welc
+    ss      5
+    ipush   0x6F6D6520  ; ome
+    ss      6
+    ipush   0x746F2054  ; to T
+    ss      7
+    ipush   0x72697856  ; rixV
+    ss      8
+    ipush   0x4D210000  ; M!
+    ss      9
+
+    ipush   5
+    li      r0 6
+    syscall
+    break;
