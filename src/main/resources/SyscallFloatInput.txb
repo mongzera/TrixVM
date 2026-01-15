@@ -1,0 +1,15 @@
+:global
+    lbl loop
+
+    li r0 3
+    syscall
+
+    li r0 3
+    syscall
+
+    f_add
+    li r0 4
+
+    syscall
+    jmp loop
+    break

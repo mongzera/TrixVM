@@ -2,8 +2,6 @@ package com.chemicaldev.trix.core;
 
 import com.chemicaldev.trix.core.context.ContextWindow;
 import com.chemicaldev.trix.core.opcodeoperations.*;
-import com.chemicaldev.trix.memory.MemoryChunk;
-import com.chemicaldev.trix.memory.StackMemory;
 
 public class VirtualMachineEngine {
 
@@ -31,10 +29,12 @@ public class VirtualMachineEngine {
 
         while(VMState.CPU_ON){
 
-            try {
-                Thread.sleep(50);
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
+            if(VMState.SLOW_DOWN){
+                try {
+                    Thread.sleep(50);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
             }
 
             currentContextWindow = contextWindows[currentContext];
@@ -75,6 +75,7 @@ public class VirtualMachineEngine {
             case Operations.REGISTER_OPCODE -> RegisterOperations.eval(OP_CODE, REGISTER_1, REGISTER_2, REGISTER_3, currentContext);
             case Operations.MEMORY_OPCODE -> MemoryOperations.eval(OP_CODE, REGISTER_1, REGISTER_2, REGISTER_3, currentContext);
             case Operations.BRANCHING_OPCODE -> BranchingOperations.eval(OP_CODE, REGISTER_1, REGISTER_2, REGISTER_3, currentContext);
+            case Operations.SYSCALL_OPCODE -> SystemCallOperations.eval(OP_CODE, REGISTER_1, REGISTER_2, REGISTER_3, currentContext);
         }
     }
 

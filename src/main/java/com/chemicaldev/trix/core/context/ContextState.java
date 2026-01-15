@@ -8,4 +8,5 @@ public class ContextState {
     public int R1_value;
     public int R2_value;
     public int R3_value;
+
 }

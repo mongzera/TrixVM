@@ -7,6 +7,7 @@ public class Operations {
     public static final byte REGISTER_OPCODE = 0x2;
     public static final byte MEMORY_OPCODE = 0x3;
     public static final byte BRANCHING_OPCODE = 0x4;
+    public static final byte SYSCALL_OPCODE = 0x5;
 
     public static final byte PUSH =  0x01;
     public static final byte POP  =  0x02;
@@ -43,5 +44,8 @@ public class Operations {
     public static final byte JZ = 0x41; //Set the program counter to x if top of stack = 0
     public static final byte CALL = 0x42; //Set the program counter to address of x, adds to CallStack
     public static final byte JMP = 0x43; //A label for a program instruction address
+
+    //Syscalls
+    public static final byte SYS = 0x50; //A label for a program instruction address
 
 }

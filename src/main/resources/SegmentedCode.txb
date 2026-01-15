@@ -4,12 +4,11 @@
     li r0 0
     li r1 1
 
-
     pushr r0
     peek
     pushr r1
     peek
-    add
+    i_add
     peek
     ls r2
 
@@ -22,7 +21,7 @@
 
     pushr r0
     pushr r1
-    add
+    i_add
     peek
     ls r2
     jmp fib

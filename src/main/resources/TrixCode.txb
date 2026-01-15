@@ -1,7 +1,0 @@
-:global
-    lbl loop
-    push 500000
-    peek
-    pop
-    jmp loop
-    break

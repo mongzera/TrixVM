@@ -60,9 +60,13 @@ public class Compiler {
         }
         if( CompilerState.DBG_ON) System.out.println(String.format("%s|%s", currentInstructionLine, line));
         switch (tokens[0]){
-            case "push":
+            case "ipush":
                 addInstruction(toInstruction(Operations.PUSH));
                 addInstruction(Integer.parseInt(tokens[1]));
+                break;
+            case "fpush":
+                addInstruction(toInstruction(Operations.PUSH));
+                addInstruction(Float.floatToIntBits(Float.parseFloat(tokens[1])));
                 break;
             case "pop":
                 addInstruction(toInstruction(Operations.POP));
@@ -79,18 +83,31 @@ public class Compiler {
             case "pushr":
                 addInstruction(toInstruction(Operations.PUSHR, getRegister(tokens[1].trim())));
                 break;
-            //ARITHMETIC
-            case "add":
+            //INTEGER ARITHMETIC
+            case "i_add":
                 addInstruction(toInstruction(Operations.I_ADD));
                 break;
-            case "sub":
+            case "i_sub":
                 addInstruction(toInstruction(Operations.I_SUB));
                 break;
-            case "mul":
+            case "i_mul":
                 addInstruction(toInstruction(Operations.I_MUL));
                 break;
-            case "div":
+            case "i_div":
                 addInstruction(toInstruction(Operations.I_DIV));
+                break;
+            //FLOAT ARITHMETIC
+            case "f_add":
+                addInstruction(toInstruction(Operations.F_ADD));
+                break;
+            case "f_sub":
+                addInstruction(toInstruction(Operations.F_SUB));
+                break;
+            case "f_mul":
+                addInstruction(toInstruction(Operations.F_MUL));
+                break;
+            case "f_div":
+                addInstruction(toInstruction(Operations.F_DIV));
                 break;
             //LOAD TO REGISTER
             case "li":
@@ -139,6 +156,10 @@ public class Compiler {
             case "lbl":
                 labelAddress.put(tokens[1].trim(), currentInstructionLine);
                 return;
+            //SYSCALLS
+            case  "syscall":
+                addInstruction(toInstruction(Operations.SYS));
+                break;
 
         }
     }
