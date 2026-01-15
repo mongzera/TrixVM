@@ -1,8 +1,12 @@
 package com.chemicaldev.trix.core;
 
-import java.util.HashMap;
-
 public class Operations {
+
+    public static final byte STACK_OPCODE = 0x0;
+    public static final byte ARITHMETIC_OPCODE = 0x1;
+    public static final byte REGISTER_OPCODE = 0x2;
+    public static final byte MEMORY_OPCODE = 0x3;
+    public static final byte BRANCHING_OPCODE = 0x4;
 
     public static final byte PUSH =  0x01;
     public static final byte POP  =  0x02;
@@ -12,10 +16,15 @@ public class Operations {
     public static final byte DUP = 0x06; //duplicates the top of the stack
 
     //Arithmetic OpCode
-    public static final byte ADD = 0x11;
-    public static final byte SUB = 0x12;
-    public static final byte MUL = 0x13;
-    public static final byte DIV = 0x14;
+    public static final byte I_ADD = 0x11;
+    public static final byte I_SUB = 0x12;
+    public static final byte I_MUL = 0x13;
+    public static final byte I_DIV = 0x14;
+
+    public static final byte F_ADD = 0x15;
+    public static final byte F_SUB = 0x16;
+    public static final byte F_MUL = 0x17;
+    public static final byte F_DIV = 0x18;
 
     //Register Load OpCode
     public static final byte LI = 0x21; //Load Immediate

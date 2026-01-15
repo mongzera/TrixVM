@@ -1,5 +1,7 @@
 :global
-    li r1 5
-    pushr r1
-    ls r2
+    lbl loop
+    push 500000
+    peek
+    pop
+    jmp loop
     break

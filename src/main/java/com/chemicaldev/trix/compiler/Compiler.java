@@ -2,7 +2,6 @@ package com.chemicaldev.trix.compiler;
 
 import com.chemicaldev.trix.core.Operations;
 import com.chemicaldev.trix.core.VMRegisters;
-import com.chemicaldev.trix.core.VMState;
 
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -82,16 +81,16 @@ public class Compiler {
                 break;
             //ARITHMETIC
             case "add":
-                addInstruction(toInstruction(Operations.ADD));
+                addInstruction(toInstruction(Operations.I_ADD));
                 break;
             case "sub":
-                addInstruction(toInstruction(Operations.SUB));
+                addInstruction(toInstruction(Operations.I_SUB));
                 break;
             case "mul":
-                addInstruction(toInstruction(Operations.MUL));
+                addInstruction(toInstruction(Operations.I_MUL));
                 break;
             case "div":
-                addInstruction(toInstruction(Operations.DIV));
+                addInstruction(toInstruction(Operations.I_DIV));
                 break;
             //LOAD TO REGISTER
             case "li":

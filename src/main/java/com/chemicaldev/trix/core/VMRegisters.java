@@ -1,5 +1,7 @@
 package com.chemicaldev.trix.core;
 
+import com.chemicaldev.trix.core.context.ContextWindow;
+
 public class VMRegisters {
     public static final byte R0 = 0x00;
     public static final byte R1 = 0x01;
@@ -39,5 +41,19 @@ public class VMRegisters {
             default: //default since R3 is the last register
                 return VMRegisters.R3_value;
         }
+    }
+
+    public static void loadFromContextWindow(ContextWindow contextWindow){
+        loadToRegister(R0, contextWindow.contextState.R0_value);
+        loadToRegister(R1, contextWindow.contextState.R1_value);
+        loadToRegister(R2, contextWindow.contextState.R2_value);
+        loadToRegister(R3, contextWindow.contextState.R3_value);
+    }
+
+    public static void saveToContextWindow(ContextWindow contextWindow){
+        contextWindow.contextState.R0_value = getRegisterValue(R0);
+        contextWindow.contextState.R1_value = getRegisterValue(R1);
+        contextWindow.contextState.R2_value = getRegisterValue(R2);
+        contextWindow.contextState.R3_value = getRegisterValue(R3);
     }
 }
