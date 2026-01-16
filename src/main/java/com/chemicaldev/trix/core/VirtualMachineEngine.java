@@ -3,12 +3,16 @@ package com.chemicaldev.trix.core;
 import com.chemicaldev.trix.core.context.ContextWindow;
 import com.chemicaldev.trix.core.opcodeoperations.*;
 
+import java.util.ArrayList;
+
 public class VirtualMachineEngine {
 
     public static final int N_CONTEXT_WINDOW = 2;
     public int activeContexts = 0;
-    public ContextWindow[] contextWindows = new ContextWindow[N_CONTEXT_WINDOW];
+    public ArrayList<ContextWindow> contextWindows = new ArrayList<>();
     public ContextWindow currentContextWindow = null;
+
+    public int currentContext = 0;
 
     public void prepare(){
         VMState.CPU_ON = true;
@@ -19,25 +23,34 @@ public class VirtualMachineEngine {
             //print error here that we cannot make more contextWindow
             return;
         }
-        contextWindows[activeContexts++] = new ContextWindow(instructions);
+        contextWindows.add(new ContextWindow(instructions));
     }
 
     /** The Main Loop */
     public void operate(){
         /** Initializations */
-        int currentContext = 0;
 
         while(VMState.CPU_ON){
 
             if(VMState.SLOW_DOWN){
                 try {
-                    Thread.sleep(50);
+                    Thread.sleep(150);
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 }
             }
 
-            currentContextWindow = contextWindows[currentContext];
+            if(contextWindows.size() <= 0) continue;
+
+            currentContextWindow = contextWindows.get(currentContext);
+
+            if(currentContextWindow.toBeTerminated) {
+                System.out.println("Program Exited!");
+                contextWindows.remove(currentContext);
+                nextContext();
+
+                continue;
+            }
 
             //load registers from contextWindow
             VMRegisters.loadFromContextWindow(currentContextWindow);
@@ -56,10 +69,16 @@ public class VirtualMachineEngine {
             if(VMState.DBG_ON) System.out.printf("[R0=%s, R1=%s, R2=%s, R3=%s]%n", VMRegisters.getRegisterValue(VMRegisters.R0), VMRegisters.getRegisterValue(VMRegisters.R1), VMRegisters.getRegisterValue(VMRegisters.R2), VMRegisters.getRegisterValue(VMRegisters.R3));
             if(VMState.MEM_DBG_ON) currentContextWindow.stackMemory.print();
 
-            currentContext = (++currentContext) % activeContexts;
+            nextContext();
 
             VMRegisters.saveToContextWindow(currentContextWindow);
         }
+    }
+
+    private void nextContext(){
+        if(contextWindows.size() <= 0) return;
+
+        currentContext = (++currentContext) % contextWindows.size();
     }
 
     private void evalInstruction(int instruction, ContextWindow currentContext){

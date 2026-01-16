@@ -13,6 +13,7 @@ public class ContextWindow {
     public StackMemory stackMemory = new StackMemory();
     public StackMemory callStack = new StackMemory();
 
+    public boolean toBeTerminated = false;
     public ContextWindow(int[] instructions){
         loadInstruction(instructions);
     }
@@ -29,6 +30,10 @@ public class ContextWindow {
 
     public void incrementPC(){
         contextState.programCounter++;
+    }
+
+    public void terminate(){
+        toBeTerminated = true;
     }
 
 

@@ -58,17 +58,17 @@ public class CodeGeneration {
             return;
         }
 
-        if( CodeGenerationState.DBG_ON) System.out.println(String.format("%s|%s", currentInstructionLine, line));
+        if( CodeGenerationState.DBG_ON) System.out.printf("%s|%s%n", currentInstructionLine, line);
 
         switch (tokens[0]){
-            case "ipush":
+            case "i_push":
                 addInstruction(toInstruction(Operations.PUSH));
                 String value = tokens[1].trim();
                 if(value.startsWith("0x") || value.startsWith("0X")) addInstruction(Integer.parseInt(value.substring(2), 16));
                 else addInstruction(Integer.parseInt(tokens[1]));
 
                 break;
-            case "fpush":
+            case "f_push":
                 addInstruction(toInstruction(Operations.PUSH));
                 addInstruction(Float.floatToIntBits(Float.parseFloat(tokens[1])));
                 break;
@@ -159,7 +159,7 @@ public class CodeGeneration {
                 break;
             case "lbl":
                 labelAddress.put(tokens[1].trim(), currentInstructionLine);
-                return;
+                break;
             //SYSCALLS
             case  "syscall":
                 addInstruction(toInstruction(Operations.SYS));
@@ -250,7 +250,6 @@ public class CodeGeneration {
 
     private void addInstruction(int line){
         instructions[currentInstructionLine++] = line;
-
     }
 
     public int[] getInstructions(){

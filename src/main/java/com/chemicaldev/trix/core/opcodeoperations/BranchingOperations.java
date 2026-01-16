@@ -24,10 +24,10 @@ public class BranchingOperations {
             case Operations.CALL:
                 a = contextWindow.programMemory.read(++contextWindow.contextState.programCounter);
                 contextWindow.callStack.push(++contextWindow.contextState.programCounter);
-
                 contextWindow.contextState.programCounter = a;
                 return;
         }
+
 
 
     }

@@ -1,35 +1,27 @@
-; Fibonacci Sequence Test with Comments
-:main
+;Fibonacci Sequence
 
-    ; Initialize first two numbers
-    li r0 0          ; r0 = 0 (first Fibonacci number)
-    li r1 1          ; r1 = 1 (second Fibonacci number)
+li r1 0     ; Load Immediate 0 to R1
+pushr r1    ; Push R1 to stack
+peek        ; Peek value
 
-    ; Push first number and print
-    pushr r0
-    peek             ; print r0
+li r2 1     ; Load Immediate 1 to R2
+pushr r2    ; Push R2 to stack
+peek        ; Peek Value
 
-    ; Push second number and print
-    pushr r1
-    peek             ; print r1
+lbl _fib    ; Label as _fib
+i_add       ; Add the 2 values from stack
+peek        ; Print the result
+ls r3       ; Save result to R3
 
-    ; Calculate first sum and store in r2
-    i_add            ; r0 + r1, push result
-    peek             ; print result
-    ls r2            ; store sum in r2
+pushr r2    ; Shift the value from R2 to R1 by pushing R2 to stack
+ls r1       ; After pushing, we Load Stack to R1
 
-    ; Start of Fibonacci loop
-    lbl fib
-    ; Prepare r0 for next iteration
-    pushr r1     ; push current number
-    ls r0        ; r0 = top of stack
+pushr r3    ; Shift the value from R3 to R2 by pusing R3 to stack
+ls r2       ; After pushing, we Load Stack to R1
 
-    ; Prepare r1 for next iteration
-    pushr r2     ; push next number
-    pushr r1     ; push next number again
-    i_add        ; add
-    peek         ; print
-    ls r2        ; load to stack
-    jmp fib      ; jump up to fib
+pushr r1    ; Now, we push the new n-1
+pushr r2    ; and the new n
+jmp _fib    ; Come back to the _fib to add them again
 
-    break
+li r0 0     ; Syscall for ending program, but this is unreachable since we are on an infinite loop
+syscall

@@ -15,6 +15,7 @@ public class SystemCallOperations {
         switch (VMRegisters.getRegisterValue(VMRegisters.R0)){
             case 0:
                 //end program
+                contextWindow.terminate();
                 break;
             case 1:
                 //read integer

@@ -29,10 +29,11 @@ public class StackOperations{
             case Operations.BREAK:
                 if (contextWindow.callStack.getPointer() >= 0) {
                     contextWindow.contextState.programCounter = contextWindow.callStack.pop();
+
                     return;
                 }
 
-                VMState.CPU_ON = false; // Turn off VM
+                contextWindow.terminate(); // Terminate program
 
                 break;
             case Operations.PUSHR:
