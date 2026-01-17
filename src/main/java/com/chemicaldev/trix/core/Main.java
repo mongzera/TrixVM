@@ -1,14 +1,21 @@
 package com.chemicaldev.trix.core;
 
 import com.chemicaldev.trix.compiler.codegenerator.CodeGeneration;
+import com.chemicaldev.trix.compiler.phases.LexicalAnalysis;
 
 public class Main {
 
     public Main(){
-        //System.out.println("0x" + Integer.toBinaryString(CodeGeneration.toInstruction(Operations.PUSH)));
 
-        //CodeGeneration txb1 = new CodeGeneration("/SegmentedCode.txb");
-        //CodeGeneration txb2 = new CodeGeneration("/SyscallFloatInput.txb");
+        //runVM();
+        compiler();
+    }
+
+    private void compiler(){
+        LexicalAnalysis.process("/test.trxc");
+    }
+
+    private void runVM(){
         CodeGeneration txb1 = new CodeGeneration("/fib.txb");
         CodeGeneration txb2 = new CodeGeneration("/SampleTextPrint.txb");
 

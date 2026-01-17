@@ -1,0 +1,17 @@
+//This is a comment
+//Hello  AWDAWD
+
+float speed;
+float angle = 12.2;
+int[] names = new int[2];
+
+int main(){
+    int x = 0, y = 4, z = 12;
+
+    if(names[0] >12){angle=2}
+}
+
+/** This is a
+  * Multiline
+  * Comment
+  */
